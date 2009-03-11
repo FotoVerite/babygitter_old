@@ -1,1 +1,1 @@
-require 'babygitter'
+# Include hook code here

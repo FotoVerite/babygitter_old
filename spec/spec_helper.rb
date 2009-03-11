@@ -1,13 +1,10 @@
-require File.expand_path(
-    File.join(File.dirname(__FILE__), %w[.. lib babygitter]))
- 
-Spec::Runner.configure do |config|
-  # == Mock Framework
-  #
-  # RSpec uses it's own mocking framework by default. If you prefer to
-  # use mocha, flexmock or RR, uncomment the appropriate line:
-  #
-  # config.mock_with :mocha
-  # config.mock_with :flexmock
-  # config.mock_with :rr
+begin
+  require File.dirname(__FILE__) + '/../../../../spec/spec_helper'
+rescue LoadError
+  puts "You need to install rspec in your base app"
+  exit
 end
+
+plugin_spec_dir = File.dirname(__FILE__)
+ActiveRecord::Base.logger = Logger.new(plugin_spec_dir + "/debug.log")
+
