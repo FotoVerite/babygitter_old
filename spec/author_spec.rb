@@ -2,7 +2,8 @@ require File.dirname(__FILE__) + '/spec_helper'
 require 'grit'
 
   @base_repo = Grit::Repo.new(File.join(File.dirname(__FILE__), "/dot_git"), :is_bare => true)
-  BRANCH= Babygitter::Branch.new(@base_repo, "testing", "http://github.com/schacon/grit/commit")
+  GIT_REPO =Babygitter::Babygitter.new(@base_repo)
+  BRANCH= GIT_REPO.branches[4]
   AUTHOR = BRANCH.authors.first
   
 describe Babygitter::Author do
@@ -12,11 +13,19 @@ describe Babygitter::Author do
   end
   
   it "should display the amounts of commits by this author" do
-    AUTHOR.number_of_commits.should == 17
+    AUTHOR.total_commited.should == 17
   end
   
-  it "should display the first committed commit timestamp" do
-    AUTHOR.first_committed.should == "Oct 28 08:12 PM 2007"
+  it "should display the lastest commit by this author" do
+    AUTHOR.latest_commit.id.should == "30e367cef2203eba2b341dc9050993b06fd1e108"
+    AUTHOR.latest_commit.date.strftime("%b %d %I:%M %p %Y").should == "Mar 30 11:50 PM 2008"
+    
+  end
+  
+  it "should display the first commit by this author" do
+    AUTHOR.began.id.should == "5f141d9c0181b8732c0ec2fab4967f0ffa24fa3f"
+    AUTHOR.began.date.strftime("%b %d %I:%M %p %Y").should == "Oct 28 08:12 PM 2007"
+    
   end
   
   it "should create an array of 52 datetimes leading back from now to be used in generating the graph" do
@@ -33,10 +42,9 @@ describe Babygitter::Author do
   
   it "should create an array object that contains the data to plot the weekly commit graph" do
     Time.should_receive(:now).and_return(Time.utc(2008,"oct",1,20,15,1))
-    AUTHOR.create_graph_data.should == [0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0,
+    AUTHOR.create_bar_data_points.should == [0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 2, 2, 0, 1, 0, 0, 2, 0, 0, 3, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    AUTHOR.create_graph_data.should
   end
   
 end

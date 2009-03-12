@@ -2,41 +2,35 @@ require File.dirname(__FILE__) + '/spec_helper'
 require 'grit'
 
   @base_repo = Grit::Repo.new(File.join(File.dirname(__FILE__), "/dot_git"), :is_bare => true)
-  GIT_REPO =Babygitter::RepoVersionTracker.new(@base_repo)
-
-describe Babygitter do
+  GIT_REPO =Babygitter::Babygitter.new(@base_repo)
+  BRANCH= GIT_REPO.branches[4]
   
-  it "should create a valid url if stored on github" do
-    GIT_REPO.remote_url.should  == "http://github.com/schacon/grit/commit"
+describe Babygitter::Branch do
+  
+  it "should diplay the author's name" do
+    BRANCH.name.should == "testing"
   end
   
-  it "should store all instances of the git branches"
-  
-  it "should put all local branches" do
-    GIT_REPO.branch_names.should == ["nonpack", "test/master", "master", "test/chacon", "testing"] 
+  it "should diplay the create author objects" do
+    BRANCH.authors.size.should == 9
   end
   
-  it "should store the total number of commits" do
-    GIT_REPO.total_commits.should == 531
+  it "should find the lastest commit" do
+    BRANCH.latest_commit.id.should == "2d3acf90f35989df8f262dc50beadc4ee3ae1560"
+    BRANCH.latest_commit.date.strftime("%b %d %I:%M %p %Y").should == "Apr 12 10:39 PM 2008"
+    
   end
   
-  it "should ascertain when the repo began" do
-    GIT_REPO.began.should == "Oct 10 02:18 AM 2007"
+  it "should find the when the branch began" do
+    BRANCH.began.id.should == "634396b2f541a9f2d58b00be1a07f0c358b999b3"
+    BRANCH.began.date.strftime("%b %d %I:%M %p %Y").should == "Oct 10 02:18 AM 2007"
   end
   
-  it "should get the submodule codes" 
-  
-  it "should find the latest commit on master" do
-    GIT_REPO.main_repo_code.id.should == "ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a"
-  end
-  
-  it "should find the last committed commit" do
-    GIT_REPO.last_commit.id.should == "ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a"
-  end
-  
-  it "should list all authors in an array" do
-    GIT_REPO.authors.should == ["Scott Chacon", "Tom Preston-Werner", "Dustin Sallings", "Chris Wanstrath", "Tim Carey-Smith", "Cristi Balan", "Kamal Fariz Mahyuddin", "Wayne Larsen", "rick", "tom"]
+  it "should create a data_map_array" do
+    BRANCH.create_active_date_array.should == ["40 2007", "40 2007", "40 2007", "40 2007", "40 2007", 
+      "40 2007", "40 2007", "40 2007", "40 2007", "40 2007", "40 2007", "40 2007", "40 2007", "40 2007",
+      "40 2007", "40 2007", "40 2007", "40 2007", "40 2007", "40 2007", "40 2007", "40 2007", "40 2007", 
+      "40 2007", "40 2007", "40 2007", "40 2007"]
   end
   
 end
-
