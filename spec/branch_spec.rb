@@ -49,15 +49,20 @@ describe Babygitter::Branch do
   end
   
   it "should find the top level folders for the project" do 
-    BRANCH.get_top_level_folders.should == ["lib", "test", "bin"]
+    BRANCH.get_top_level_folders.should == ["bin", "lib", "test"]
   end
+  
+  it "should find the top level folders for the project" do 
+    BRANCH.get_top_and_secondary_level_folders.should == ["bin", "lib", "test", "lib/grit", "test/fixtures"]
+  end
+  
   
   it "should create an array map for plotting lines commit by folder" do
-    BRANCH.create_points_map_for_top_level_folders.should == {""=> 0, "lib"=> 0, "bin"=> 0, "test"=> 0}
+    BRANCH.create_hash_map(["bin", "lib", "test"]).should == {""=> 0, "lib"=> 0, "bin"=> 0, "test"=> 0}
   end
-  
+
   it "should create an array hashes for plotting by top level folder" do
-   @plotted_points = BRANCH.plot_points_for_folders
+   @plotted_points = BRANCH.plot_points_for_top_Level_folders
    @plotted_points.should == [{""=>79, "lib"=>583, "bin"=>0, "test"=>336}, 
      {""=>6, "lib"=>127, "bin"=>0, "test"=>191}, {""=>181, "lib"=>54, "bin"=>0, "test"=>52}, 
      {""=>0, "lib"=>26, "bin"=>0, "test"=>690}, {""=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
@@ -72,6 +77,38 @@ describe Babygitter::Branch do
      {""=>1, "lib"=>46, "bin"=>0, "test"=>64}, {""=>0, "lib"=>19, "bin"=>0, "test"=>19},
      {""=>0, "lib"=>0, "bin"=>0, "test"=>0}, {""=>1, "lib"=>2, "bin"=>0, "test"=>5}, 
      {""=>0, "lib"=>61, "bin"=>0, "test"=>31}, {""=>0, "lib"=>5, "bin"=>0, "test"=>0}]
+   @plotted_points.size.should == BRANCH.create_active_date_array.size
+  end
+  
+  it "should create an array hashes for plotting by top level and secondary level folder" do
+   @plotted_points = BRANCH. plot_points_for_top_Level_and_secondary_folders
+   @plotted_points.should == [{"test/fixtures"=>42, ""=>79, "lib/grit"=>564, "lib"=>19, "bin"=>0, "test"=>294}, 
+     {"test/fixtures"=>131, ""=>6, "lib/grit"=>121, "lib"=>6, "bin"=>0, "test"=>60}, 
+     {"test/fixtures"=>0, ""=>181, "lib/grit"=>53, "lib"=>1, "bin"=>0, "test"=>52},
+     {"test/fixtures"=>610, ""=>0, "lib/grit"=>25, "lib"=>1, "bin"=>0, "test"=>80},
+     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
+     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
+     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
+     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
+     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
+     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
+     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
+     {"test/fixtures"=>1, ""=>0, "lib/grit"=>46, "lib"=>0, "bin"=>0, "test"=>21}, 
+     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
+     {"test/fixtures"=>0, ""=>8, "lib/grit"=>34, "lib"=>4, "bin"=>0, "test"=>36}, 
+     {"test/fixtures"=>201, ""=>10, "lib/grit"=>33, "lib"=>1, "bin"=>0, "test"=>46}, 
+     {"test/fixtures"=>0, ""=>0, "lib/grit"=>12, "lib"=>0, "bin"=>0, "test"=>0}, 
+     {"test/fixtures"=>0, ""=>0, "lib/grit"=>1, "lib"=>0, "bin"=>0, "test"=>17}, 
+     {"test/fixtures"=>661, ""=>0, "lib/grit"=>21, "lib"=>0, "bin"=>0, "test"=>20},
+     {"test/fixtures"=>102, ""=>0, "lib/grit"=>131, "lib"=>1, "bin"=>0, "test"=>124}, 
+     {"test/fixtures"=>1155, ""=>0, "lib/grit"=>43, "lib"=>0, "bin"=>0, "test"=>95}, 
+     {"test/fixtures"=>2, ""=>0, "lib/grit"=>6, "lib"=>0, "bin"=>0, "test"=>1}, 
+     {"test/fixtures"=>5, ""=>1, "lib/grit"=>45, "lib"=>1, "bin"=>0, "test"=>59}, 
+     {"test/fixtures"=>0, ""=>0, "lib/grit"=>19, "lib"=>0, "bin"=>0, "test"=>19}, 
+     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
+     {"test/fixtures"=>0, ""=>1, "lib/grit"=>1, "lib"=>1, "bin"=>0, "test"=>5}, 
+     {"test/fixtures"=>0, ""=>0, "lib/grit"=>59, "lib"=>2, "bin"=>0, "test"=>31}, 
+     {"test/fixtures"=>0, ""=>0, "lib/grit"=>5, "lib"=>0, "bin"=>0, "test"=>0}]
    @plotted_points.size.should == BRANCH.create_active_date_array.size
   end
       
