@@ -1,4 +1,7 @@
 require 'grit'
+require 'babygitter/commit_addedum'
+require 'babygitter/commit_stats_addedum'
+
 module Babygitter
   # Customizable options
   def self.report_file_path
@@ -56,13 +59,17 @@ module Babygitter
       @authors = get_authors
       @began = first_committed_commit
       @last_commit = last_commited_commit
-      @total_commits = get_all_commits_in_repo.size
+      @total_commits = get_total_uniq_commits_in_repo
       @submodule_list = submodule_codes
       @remote_url = get_remote_url(repo)
     end
     
     def get_all_commits_in_repo
       @branches.collect(&:commits).flatten.sort_by { |k| k.authored_date }.reverse
+    end
+    
+    def get_total_uniq_commits_in_repo
+      get_all_commits_in_repo.collect(&:id).uniq.size
     end
     
     def last_commited_commit
@@ -105,7 +112,7 @@ module Babygitter
     end
     
     def inspect
-      %Q{#<Babygitter "#{@branch_names} #{@authors} #{@total_commits} #{@began} #{@id}">}
+      %Q{#<Babygitter #{@id}">}
     end
     
   end

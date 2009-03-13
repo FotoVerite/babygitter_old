@@ -10,6 +10,12 @@ describe Babygitter do
     GIT_REPO.remote_url.should  == "http://github.com/schacon/grit"
   end
   
+  it "should create a " do
+    GIT_REPO.should_receive(:remote_url).and_return("http://somewhere")
+    GIT_REPO.remote_url.should  == "http://github.com/schacon/grit"
+  end
+    
+  
   it "should store all instances of the git branches" do
     GIT_REPO.branches.size.should == 5
   end
@@ -19,7 +25,7 @@ describe Babygitter do
   end
   
   it "should store the total number of commits" do
-    GIT_REPO.total_commits.should == 531
+    GIT_REPO.total_commits.should == 107
   end
   
   it "should ascertain when the repo began" do
