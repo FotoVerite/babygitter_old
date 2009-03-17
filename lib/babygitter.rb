@@ -1,7 +1,6 @@
 require 'grit'
-require 'babygitter/commit_addedum'
-require 'babygitter/commit_stats_addedum'
-
+require File.join(File.dirname(__FILE__), 'babygitter/commit_addedum')
+require File.join(File.dirname(__FILE__), 'babygitter/commit_stats_addedum')
 module Babygitter
   # Customizable options
   def self.report_file_path
@@ -11,7 +10,7 @@ module Babygitter
   def self.report_file_path=(report_file_path)
     @@report_file_path = report_file_path
   end
-  self.report_file_path = File.join(File.dirname(__FILE__), '../../../../public/babygitter_report.html')
+  self.report_file_path = File.join(File.dirname(__FILE__), '../../../../log')
 
   def self.stylesheet
  @@stylesheet
@@ -48,17 +47,27 @@ module Babygitter
   end
   self.instructions = File.join(File.dirname(__FILE__), '../assets/guides/display_only.html.erb')
   
-  class Babygitter
+  def self.folder_levels
+    @@folder_levels
+  end
+  
+  def self.folder_levels=(folder_levels)
+    @@folder_levels = folder_levels
+  end
+  self.folder_levels = 2
+  
+  class Repo
     
-    attr_accessor :total_commits, :branches, :branch_names, :authors, :began, :last_commit, :remote_url, :submodule_list
+    attr_accessor :total_commits, :branches, :branch_names, :authors_names, :began, :lastest_commit, :remote_url, :submodule_list
     
-    def initialize(repo)
+    def initialize(path, options = {})
+      repo = Grit::Repo.new(path, options)
       @path = repo.path
       @branch_names = get_branch_names(repo)
       @branches = create_branches(repo)
-      @authors = get_authors
+      @authors_names = get_authors
       @began = first_committed_commit
-      @last_commit = last_commited_commit
+      @lastest_commit = last_commited_commit
       @total_commits = get_total_uniq_commits_in_repo
       @submodule_list = submodule_codes
       @remote_url = get_remote_url(repo)
@@ -112,7 +121,7 @@ module Babygitter
     end
     
     def inspect
-      %Q{#<Babygitter #{@id}">}
+      %Q{#<Babygitter::Repo #{@id}">}
     end
     
   end

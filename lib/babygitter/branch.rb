@@ -14,8 +14,7 @@ module Babygitter
         @latest_commit = commits.first
         @by_week = sorted_commits_by_week
         @mapped_diffs = @by_week.map {|array_of_commits| array_of_commits.map(&:stats).map(&:to_diffstat).flatten }
-        @top_level = get_top_level_folders
-        @top_and_secondary_level = get_top_and_secondary_level_folders
+        @folder_array = get_array_of_mapped_folder_names
       end
       
       def get_author_names
@@ -58,16 +57,6 @@ module Babygitter
         @mapped_diffs.map {|week| week.map {|c| c.additions - c.deletions}}.map {|a| a.sum}
       end
       
-      def get_top_level_folders 
-        @mapped_diffs.flatten.map {|diff_stat| 
-          diff_stat.filename.scan(/^.*?(?=\/)/) }.flatten.uniq
-      end
-      
-      def get_top_and_secondary_level_folders 
-        @top_level + @mapped_diffs.flatten.map {|diff_stat|
-           diff_stat.filename.scan(/^.*?\/.*?(?=\/)/) }.flatten.uniq
-      end
-      
       def create_hash_map(array)
         hash = {}
         array.map {|folder| hash[folder] = 0}
@@ -75,37 +64,74 @@ module Babygitter
         hash
       end
       
-      def plot_points_for_top_Level_folders
-        output = []
-        diff_staff_by_week =  @mapped_diffs
-          for array_of_diff_staff in diff_staff_by_week
-            plot_hash = create_hash_map(@top_level).clone
-            for diff in array_of_diff_staff
-              key = diff.filename.scan(/^.*?(?=\/)/).to_s
-              plot_hash[key] = plot_hash[key] += (diff.additions - diff.deletions)
-            end
-            output << plot_hash
-          end
-          output
-      end    
+      def create_hash_map_with_array(array)
+        hash = {}
+        array.map {|folder| hash[folder] = [0]}
+        hash[""] = [0]
+        hash
+      end
       
-      def plot_points_for_top_Level_and_secondary_folders
+      def get_array_of_mapped_folder_names
+        array = []
+        flattened_diffs = @mapped_diffs.flatten 
+        i = 1 
+        while i <= Babygitter.folder_levels
+          folder_names = []
+          for diff in flattened_diffs
+           folder_names << diff.filename.scan(build_regexp(i)) 
+          end
+          #I hate this is there a better way. 
+          i += 1
+          array << folder_names.flatten.uniq          
+        end
+        array
+      end
+      
+      def plot_folder_points(levels)
+        stable_hash = create_hash_map_with_array(@folder_array[0..(levels -1)].flatten)
+        ola(levels).each do |hash|
+          hash.each_key do |key|
+            stable_hash[key] << (stable_hash[key].last + hash[key])
+          end
+        end
+        stable_hash
+      end
+      
+      def ola(levels)
         output = []
         diff_staff_by_week =  @mapped_diffs
           for array_of_diff_staff in diff_staff_by_week
-            plot_hash = create_hash_map(@top_and_secondary_level).clone
+            plot_hash = create_hash_map(@folder_array[0..(levels -1)].flatten).clone
             for diff in array_of_diff_staff
-              if diff.filename.scan(/^.*?\/.*?(?=\/)/).to_s != ""
-                key = diff.filename.scan(/^.*?\/.*?(?=\/)/).to_s
-              else
-                key = diff.filename.scan(/^.*?(?=\/)/).to_s
-              end
+              key = find_key(levels, diff)
               plot_hash[key] = plot_hash[key] += (diff.additions - diff.deletions)
             end
             output << plot_hash
           end
           output
       end
-    
+      
+      def find_key(levels, diff)
+      i = levels
+      key = nil
+      levels.downto(2) {
+        key = diff.filename.scan(build_regexp(i)).to_s if diff.filename.scan(build_regexp(i)).to_s != ""
+        i -= 1 
+      }
+        key = diff.filename.scan(/^.*?(?=\/)/).to_s unless key
+        key
+      end
+      
+      def build_regexp(integer)
+        regexp_string = "^.*?"
+        i = 1
+        while i < integer
+          regexp_string += "\/.*?" 
+          i +=1
+        end
+        regexp_string += "(?=\/)"
+        Regexp.new(regexp_string)
+      end
+     
   end
 end

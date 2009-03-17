@@ -2,12 +2,12 @@ module Babygitter
   
   class Author
     
-     attr_accessor :name, :commits, :total_commited, :began, :latest_commit
+     attr_accessor :name, :commits, :total_committed, :began, :latest_commit
 
       def initialize(commits)
         @name = commits.first.author.name
         @commits = commits
-        @total_commited = commits.size
+        @total_committed = commits.size
         @began = commits.last
         @latest_commit = commits.first
       end

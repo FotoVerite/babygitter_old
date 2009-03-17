@@ -1,8 +1,7 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'grit'
 
-  @base_repo = Grit::Repo.new(File.join(File.dirname(__FILE__), "/dot_git"), :is_bare => true)
-  GIT_REPO =Babygitter::Babygitter.new(@base_repo)
+  GIT_REPO =Babygitter::Repo.new(File.join(File.dirname(__FILE__), "/dot_git"), :is_bare => true)
   BRANCH= GIT_REPO.branches[4]
   
 describe Babygitter::Branch do
@@ -20,7 +19,7 @@ describe Babygitter::Branch do
   end
    
   it "should find the lastest commit" do
-    BRANCH.latest_commit.id.should=="2d3acf90f35989df8f262dc50beadc4ee3ae1560"
+    BRANCH.latest_commit.id.should == "2d3acf90f35989df8f262dc50beadc4ee3ae1560"
     BRANCH.latest_commit.date.strftime("%b %d %I:%M %p %Y").should == "Apr 12 10:39 PM 2008"
     
   end
@@ -48,68 +47,44 @@ describe Babygitter::Branch do
     0, 0, 0, 68, 0, 82, 291, 12, 18, 702, 358, 1293, 9, 111, 38, 0, 8, 92, 5]
   end
   
-  it "should find the top level folders for the project" do 
-    BRANCH.get_top_level_folders.should == ["bin", "lib", "test"]
-  end
-  
-  it "should find the top level folders for the project" do 
-    BRANCH.get_top_and_secondary_level_folders.should == ["bin", "lib", "test", "lib/grit", "test/fixtures"]
-  end
-  
-  
   it "should create an array map for plotting lines commit by folder" do
     BRANCH.create_hash_map(["bin", "lib", "test"]).should == {""=> 0, "lib"=> 0, "bin"=> 0, "test"=> 0}
   end
-
-  it "should create an array hashes for plotting by top level folder" do
-   @plotted_points = BRANCH.plot_points_for_top_Level_folders
-   @plotted_points.should == [{""=>79, "lib"=>583, "bin"=>0, "test"=>336}, 
-     {""=>6, "lib"=>127, "bin"=>0, "test"=>191}, {""=>181, "lib"=>54, "bin"=>0, "test"=>52}, 
-     {""=>0, "lib"=>26, "bin"=>0, "test"=>690}, {""=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
-     {""=>0, "lib"=>0, "bin"=>0, "test"=>0}, {""=>0, "lib"=>0, "bin"=>0, "test"=>0},
-     {""=>0, "lib"=>0, "bin"=>0, "test"=>0}, {""=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
-     {""=>0, "lib"=>0, "bin"=>0, "test"=>0}, {""=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
-     {""=>0, "lib"=>46, "bin"=>0, "test"=>22}, {""=>0, "lib"=>0, "bin"=>0, "test"=>0},
-     {""=>8, "lib"=>38, "bin"=>0, "test"=>36}, {""=>10, "lib"=>34, "bin"=>0, "test"=>247},
-     {""=>0, "lib"=>12, "bin"=>0, "test"=>0}, {""=>0, "lib"=>1, "bin"=>0, "test"=>17},
-     {""=>0, "lib"=>21, "bin"=>0, "test"=>681}, {""=>0, "lib"=>132, "bin"=>0, "test"=>226},
-     {""=>0, "lib"=>43, "bin"=>0, "test"=>1250}, {""=>0, "lib"=>6, "bin"=>0, "test"=>3}, 
-     {""=>1, "lib"=>46, "bin"=>0, "test"=>64}, {""=>0, "lib"=>19, "bin"=>0, "test"=>19},
-     {""=>0, "lib"=>0, "bin"=>0, "test"=>0}, {""=>1, "lib"=>2, "bin"=>0, "test"=>5}, 
-     {""=>0, "lib"=>61, "bin"=>0, "test"=>31}, {""=>0, "lib"=>5, "bin"=>0, "test"=>0}]
-   @plotted_points.size.should == BRANCH.create_active_date_array.size
+  
+  it "it should fully map out the folders by depth" do 
+    BRANCH.get_array_of_mapped_folder_names.should == [["bin", "lib", "test"], ["lib/grit", "test/fixtures"]]
   end
   
-  it "should create an array hashes for plotting by top level and secondary level folder" do
-   @plotted_points = BRANCH. plot_points_for_top_Level_and_secondary_folders
-   @plotted_points.should == [{"test/fixtures"=>42, ""=>79, "lib/grit"=>564, "lib"=>19, "bin"=>0, "test"=>294}, 
-     {"test/fixtures"=>131, ""=>6, "lib/grit"=>121, "lib"=>6, "bin"=>0, "test"=>60}, 
-     {"test/fixtures"=>0, ""=>181, "lib/grit"=>53, "lib"=>1, "bin"=>0, "test"=>52},
-     {"test/fixtures"=>610, ""=>0, "lib/grit"=>25, "lib"=>1, "bin"=>0, "test"=>80},
-     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
-     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
-     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
-     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
-     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
-     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
-     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
-     {"test/fixtures"=>1, ""=>0, "lib/grit"=>46, "lib"=>0, "bin"=>0, "test"=>21}, 
-     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
-     {"test/fixtures"=>0, ""=>8, "lib/grit"=>34, "lib"=>4, "bin"=>0, "test"=>36}, 
-     {"test/fixtures"=>201, ""=>10, "lib/grit"=>33, "lib"=>1, "bin"=>0, "test"=>46}, 
-     {"test/fixtures"=>0, ""=>0, "lib/grit"=>12, "lib"=>0, "bin"=>0, "test"=>0}, 
-     {"test/fixtures"=>0, ""=>0, "lib/grit"=>1, "lib"=>0, "bin"=>0, "test"=>17}, 
-     {"test/fixtures"=>661, ""=>0, "lib/grit"=>21, "lib"=>0, "bin"=>0, "test"=>20},
-     {"test/fixtures"=>102, ""=>0, "lib/grit"=>131, "lib"=>1, "bin"=>0, "test"=>124}, 
-     {"test/fixtures"=>1155, ""=>0, "lib/grit"=>43, "lib"=>0, "bin"=>0, "test"=>95}, 
-     {"test/fixtures"=>2, ""=>0, "lib/grit"=>6, "lib"=>0, "bin"=>0, "test"=>1}, 
-     {"test/fixtures"=>5, ""=>1, "lib/grit"=>45, "lib"=>1, "bin"=>0, "test"=>59}, 
-     {"test/fixtures"=>0, ""=>0, "lib/grit"=>19, "lib"=>0, "bin"=>0, "test"=>19}, 
-     {"test/fixtures"=>0, ""=>0, "lib/grit"=>0, "lib"=>0, "bin"=>0, "test"=>0}, 
-     {"test/fixtures"=>0, ""=>1, "lib/grit"=>1, "lib"=>1, "bin"=>0, "test"=>5}, 
-     {"test/fixtures"=>0, ""=>0, "lib/grit"=>59, "lib"=>2, "bin"=>0, "test"=>31}, 
-     {"test/fixtures"=>0, ""=>0, "lib/grit"=>5, "lib"=>0, "bin"=>0, "test"=>0}]
-   @plotted_points.size.should == BRANCH.create_active_date_array.size
+  it "should find the right key for the hash" do
+    BRANCH.find_key(3, BRANCH.commits.first.stats.to_diffstat.flatten.first).should == "lib/grit"
+    BRANCH.find_key(2, BRANCH.commits.first.stats.to_diffstat.flatten.first).should == "lib/grit"
+    BRANCH.find_key(1, BRANCH.commits.first.stats.to_diffstat.flatten.first).should == "lib"
+    
+  end
+  
+  it 'it should map out the diffs by folder, level and date' do
+    BRANCH.ola(2)[0..2].should == [{"test/fixtures"=>42, ""=>79, "lib/grit"=>564, "lib"=>19, "bin"=>0, "test"=>294}, 
+      {"test/fixtures"=>131, ""=>6, "lib/grit"=>121, "lib"=>6, "bin"=>0, "test"=>60}, 
+      {"test/fixtures"=>0, ""=>181, "lib/grit"=>53, "lib"=>1, "bin"=>0, "test"=>52}]
+    BRANCH.ola(1)[0..2].should == [{""=>79, "lib"=>583, "bin"=>0, "test"=>336}, 
+      {""=>6, "lib"=>127, "bin"=>0, "test"=>191}, {""=>181, "lib"=>54, "bin"=>0, "test"=>52}]
+  end
+  
+  it "it should plot the points out correctly by level of depth" do
+    BRANCH.plot_folder_points(1).should == {""=>[0, 79, 85, 266, 266, 266, 266, 266, 266, 266, 266, 266, 266, 266, 274, 284,
+     284, 284, 284, 284, 284, 284, 285, 285, 285, 286, 286, 286], "lib"=>[0, 583, 710, 764, 790, 790, 790, 790, 790, 790,
+     790, 790, 836, 836, 874, 908, 920, 921, 942, 1074, 1117, 1123, 1169, 1188, 1188, 1190, 1251, 1256], "test"=>[0, 336,
+     527, 579, 1269, 1269, 1269, 1269, 1269, 1269, 1269, 1269, 1291, 1291, 1327, 1574, 1574, 1591, 2272, 2498, 3748, 3751,
+     3815, 3834, 3834, 3839, 3870, 3870], "bin"=>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0]}
+    BRANCH.plot_folder_points(2).should == {""=>[0, 79, 85, 266, 266, 266, 266, 266, 266, 266, 266, 266, 266, 266, 274, 284,
+     284, 284, 284, 284, 284, 284, 285, 285, 285, 286, 286, 286], "test/fixtures"=>[0, 42, 173, 173, 783, 783, 783, 783,
+     783, 783, 783, 783, 784, 784, 784, 985, 985, 985, 1646, 1748, 2903, 2905, 2910, 2910, 2910, 2910, 2910, 2910], 
+     "lib/grit"=>[0, 564, 685, 738, 763, 763, 763, 763, 763, 763, 763, 763, 809, 809, 843, 876, 888, 889, 910, 1041, 1084,
+     1090, 1135, 1154, 1154, 1155, 1214, 1219], "lib"=>[0, 19, 25, 26, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 31, 32, 32, 32, 
+     32, 33, 33, 33, 34, 34, 34, 35, 37, 37], "test"=>[0, 294, 354, 406, 486, 486, 486, 486, 486, 486, 486, 486, 507, 507, 543, 
+     589, 589, 606, 626, 750, 845, 846, 905, 924, 924, 929, 960, 960], "bin"=>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
   end
       
 end
