@@ -15,8 +15,8 @@ module Babygitter
       branches.map do |branch|
        "<div>
       <h2>#{branch.name}</h2>\n" +
-      create_histograph_of_commits_by_author_for_branch(branch) +
-      create_stacked_bar_graph_of_commits_by_author_for_branch(branch) +
+      create_histograph_of_commits_by_author_for_branch(branch) + "\n" +
+      create_stacked_bar_graph_of_commits_by_author_for_branch(branch) + "\n" +
       folder_graphs(branch, Babygitter.folder_levels) +
       "<p>Last commit was done <tt>#{link_to_github?(branch.latest_commit, remote_url)}</tt> by #{branch.latest_commit.author.name} " +
       "on #{branch.latest_commit.date_time_string}
@@ -43,14 +43,12 @@ module Babygitter
    
    def folder_graphs(branch, levels)
      string = ""
-     i = 1
-      while i <= levels
-        string += create_folder_graph(branch, i) + "\n"
-        i += 1
-      end
-    string
+     for level in levels   
+       string += create_folder_graph(branch, level) + "\n"
+     end
+     string
    end
-   
+    
    def committer_detail(comments, remote_url)
       comments.map do |c|
         '<li>' + CGI::escapeHTML(c.message) + 

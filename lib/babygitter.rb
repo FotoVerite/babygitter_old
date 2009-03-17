@@ -5,7 +5,7 @@ module Babygitter
   
   class << self
     # Customizable options
-    attr_accessor :report_file_path, :stylesheet, :template, :additional_links, :instructions, :folder_levels. :blacklisted_folders
+    attr_accessor :report_file_path, :stylesheet, :template, :additional_links, :instructions, :jquery, :folder_levels, :blacklisted_folders
     
     def blacklisted_folders=(blacklisted_folders)
       raise "must be an array" unless blacklisted_folders.is_a?(Array)
@@ -21,14 +21,13 @@ module Babygitter
   
   self.report_file_path = File.join(File.dirname(__FILE__), '../../../../log')
   self.stylesheet = File.join(File.dirname(__FILE__), '../assets/stylesheets/default.css')
+  self.jquery = File.join(File.dirname(__FILE__), '../assets/javascripts/jquery.js')
   self.template = File.join(File.dirname(__FILE__), '../assets/templates/default.html.erb')
   self.additional_links = File.join(File.dirname(__FILE__), '../assets/guides/bdd_stack.html.erb')
   self.instructions = File.join(File.dirname(__FILE__), '../assets/guides/display_only.html.erb')
-  self.folder_levels = [1]
+  self.folder_levels = [2]
   self.blacklisted_folders = []
-  
 
-  
   class Repo
     
     attr_accessor :total_commits, :branches, :branch_names, :authors_names, :began, :lastest_commit, :remote_url, :submodule_list

@@ -20,10 +20,11 @@ class ReportGenerator < Babygitter::Repo
    def templated_report
      require 'erb'
      
-     stylesheet, additional_links, instructions = '', '', ''
+     stylesheet, additional_links, instructions, jquery = '', '', '', ''
      File.open(Babygitter.stylesheet, 'r') { |f| stylesheet = f.read }
      File.open(Babygitter.additional_links, 'r') { |f| additional_links = f.read }
      File.open(Babygitter.instructions, 'r') { |f| instructions = f.read }
+     File.open(Babygitter.jquery, 'r') { |f| jquery = f.read }
      template = File.read(Babygitter.template)
      result = ERB.new(template).result(binding)
 

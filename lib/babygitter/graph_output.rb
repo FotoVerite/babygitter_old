@@ -61,9 +61,9 @@ module Babygitter
     end
     
     def create_folder_graph(branch, level)
-      g = Gruff::Line.new('800x800') # Define a custom size
+      g = Gruff::Line.new('800x600') # Define a custom size
       g.title = 'Plot of commits by Top Level Folder'
-      g.legend_font_size = 10 # Legend font size
+      g.legend_font_size = 12 # Legend font size
       
             
       branch.plot_folder_points(level).each do |key,value|
