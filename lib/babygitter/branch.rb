@@ -2,7 +2,7 @@ module Babygitter
   
   class Branch
     
-     attr_accessor :name, :author_names, :authors, :commits, :total_commits, :began, :latest_commit
+     attr_reader :name, :author_names, :authors, :commits, :total_commits, :began, :latest_commit
 
       def initialize(name, commits)
         @name = name
@@ -75,7 +75,7 @@ module Babygitter
         array = []
         flattened_diffs = @mapped_diffs.flatten 
         i = 1 
-        while i <= Babygitter.folder_levels
+        while i <= Babygitter.folder_levels.max
           folder_names = []
           for diff in flattened_diffs
            folder_names << diff.filename.scan(build_regexp(i)) 
@@ -89,7 +89,7 @@ module Babygitter
       
       def plot_folder_points(levels)
         stable_hash = create_hash_map_with_array(@folder_array[0..(levels -1)].flatten)
-        ola(levels).each do |hash|
+        get_folder_commits_by_week_and_level(levels).each do |hash|
           hash.each_key do |key|
             stable_hash[key] << (stable_hash[key].last + hash[key])
           end
@@ -97,7 +97,7 @@ module Babygitter
         stable_hash
       end
       
-      def ola(levels)
+      def get_folder_commits_by_week_and_level(levels)
         output = []
         diff_staff_by_week =  @mapped_diffs
           for array_of_diff_staff in diff_staff_by_week
@@ -112,12 +112,12 @@ module Babygitter
       end
       
       def find_key(levels, diff)
-      i = levels
-      key = nil
-      levels.downto(2) {
-        key = diff.filename.scan(build_regexp(i)).to_s if diff.filename.scan(build_regexp(i)).to_s != ""
-        i -= 1 
-      }
+        i = levels
+        key = nil
+        while i > 0 && key == nil
+          key = diff.filename.scan(build_regexp(i)).to_s if diff.filename.scan(build_regexp(i)).to_s != ""
+          i -= 1
+        end
         key = diff.filename.scan(/^.*?(?=\/)/).to_s unless key
         key
       end

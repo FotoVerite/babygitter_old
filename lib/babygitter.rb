@@ -2,59 +2,32 @@ require 'grit'
 require File.join(File.dirname(__FILE__), 'babygitter/commit_addedum')
 require File.join(File.dirname(__FILE__), 'babygitter/commit_stats_addedum')
 module Babygitter
-  # Customizable options
-  def self.report_file_path
-    @@report_file_path
+  
+  class << self
+    # Customizable options
+    attr_accessor :report_file_path, :stylesheet, :template, :additional_links, :instructions, :folder_levels. :blacklisted_folders
+    
+    def blacklisted_folders=(blacklisted_folders)
+      raise "must be an array" unless blacklisted_folders.is_a?(Array)
+      @blacklisted_folders = blacklisted_folders
+    end
+    
+    def folder_levels=(folder_levels)
+      raise "must be an array" unless folder_levels.is_a?(Array)
+      @folder_levels = folder_levels
+    end
+  
   end
   
-  def self.report_file_path=(report_file_path)
-    @@report_file_path = report_file_path
-  end
   self.report_file_path = File.join(File.dirname(__FILE__), '../../../../log')
-
-  def self.stylesheet
- @@stylesheet
-  end
-  def self.stylesheet=(stylesheet)
-    @@stylesheet = stylesheet
-  end
   self.stylesheet = File.join(File.dirname(__FILE__), '../assets/stylesheets/default.css')
-
-  def self.template
-    @@template
-  end
-  
-  def self.template=(template)
-    @@template = template
-  end
   self.template = File.join(File.dirname(__FILE__), '../assets/templates/default.html.erb')
-
-  def self.additional_links
-    @@additional_links
-  end
-  
-  def self.additional_links=(additional_links)
-    @@additional_links = additional_links
-  end
   self.additional_links = File.join(File.dirname(__FILE__), '../assets/guides/bdd_stack.html.erb')
-
-  def self.instructions
-    @@instructions
-  end
-   
-  def self.instructions=(instructions)
-    @@instructions = instructions
-  end
   self.instructions = File.join(File.dirname(__FILE__), '../assets/guides/display_only.html.erb')
+  self.folder_levels = [1]
+  self.blacklisted_folders = []
   
-  def self.folder_levels
-    @@folder_levels
-  end
-  
-  def self.folder_levels=(folder_levels)
-    @@folder_levels = folder_levels
-  end
-  self.folder_levels = 2
+
   
   class Repo
     

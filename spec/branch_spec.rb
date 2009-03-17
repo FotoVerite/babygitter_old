@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'grit'
-
+  Babygitter.folder_levels = [2]
   GIT_REPO =Babygitter::Repo.new(File.join(File.dirname(__FILE__), "/dot_git"), :is_bare => true)
   BRANCH= GIT_REPO.branches[4]
   
@@ -63,10 +63,10 @@ describe Babygitter::Branch do
   end
   
   it 'it should map out the diffs by folder, level and date' do
-    BRANCH.ola(2)[0..2].should == [{"test/fixtures"=>42, ""=>79, "lib/grit"=>564, "lib"=>19, "bin"=>0, "test"=>294}, 
+    BRANCH.get_folder_commits_by_week_and_level(2)[0..2].should == [{"test/fixtures"=>42, ""=>79, "lib/grit"=>564, "lib"=>19, "bin"=>0, "test"=>294}, 
       {"test/fixtures"=>131, ""=>6, "lib/grit"=>121, "lib"=>6, "bin"=>0, "test"=>60}, 
       {"test/fixtures"=>0, ""=>181, "lib/grit"=>53, "lib"=>1, "bin"=>0, "test"=>52}]
-    BRANCH.ola(1)[0..2].should == [{""=>79, "lib"=>583, "bin"=>0, "test"=>336}, 
+    BRANCH.get_folder_commits_by_week_and_level(1)[0..2].should == [{""=>79, "lib"=>583, "bin"=>0, "test"=>336}, 
       {""=>6, "lib"=>127, "bin"=>0, "test"=>191}, {""=>181, "lib"=>54, "bin"=>0, "test"=>52}]
   end
   
