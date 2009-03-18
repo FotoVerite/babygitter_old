@@ -1,20 +1,22 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'grit'
 
-  @base_repo = Grit::Repo.new(File.join(File.dirname(__FILE__), "/dot_git"), :is_bare => true)
-  GIT_REPO =Babygitter::Babygitter.new(@base_repo)
+  GIT_REPO =Babygitter::Repo.new(File.join(File.dirname(__FILE__), "/dot_git"), :is_bare => true)
 
-describe Babygitter do
+describe Babygitter::Repo do
   
   it "should create a valid url if stored on github" do
     GIT_REPO.remote_url.should  == "http://github.com/schacon/grit"
   end
   
   it "should create a " do
-    GIT_REPO.should_receive(:remote_url).and_return("http://somewhere")
+    Grit::Config.should_receive(:fetch).and_return("http://somewhere")
     GIT_REPO.remote_url.should  == "http://github.com/schacon/grit"
   end
-    
+  
+  it "should get the git repository's project name" do
+    GIT_REPO.project_name.should == "grit"
+  end
   
   it "should store all instances of the git branches" do
     GIT_REPO.branches.size.should == 5
@@ -34,16 +36,12 @@ describe Babygitter do
   
   it "should get the submodule codes"
   
-  it "should find the latest commit on master" do
-    GIT_REPO.last_commit.id.should == "ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a"
-  end
-  
   it "should find the last committed commit" do
-    GIT_REPO.last_commit.id.should == "ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a"
+    GIT_REPO.lastest_commit.id.should == "ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a"
   end
   
   it "should list all authors in an array" do
-    GIT_REPO.authors.should == ["Chris Wanstrath", "Cristi Balan", "Dustin Sallings", "Kamal Fariz Mahyuddin", "rick", 
+    GIT_REPO.authors_names.should == ["Chris Wanstrath", "Cristi Balan", "Dustin Sallings", "Kamal Fariz Mahyuddin", "rick", 
       "Scott Chacon", "Tim Carey-Smith", "tom", "Tom Preston-Werner", "Wayne Larsen"]
   end
   

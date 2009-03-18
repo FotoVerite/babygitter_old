@@ -10,35 +10,68 @@ module Babygitter
        array_of_authors[0..-2].join(', ') + ' and ' + array_of_authors.last + ' have'
      end
    end
+   
+   def branches_list(branches_names)
+      case branches_names.length
+      when 1
+        branches_names.first
+      else
+        branches_names[0..-2].join(', ') + ' and ' + branches_names.last
+      end
+    end
 
    def branch_details(branches, remote_url)
       branches.map do |branch|
-       "<div>
-      <h2>#{branch.name}</h2>\n" +
+      "<h2 class='branch_name open'>#{branch.name}</h2>\n
+      <div class='branch_wrapper'>\n
+      \t<div class='image_gallery'>\n" +
       create_histograph_of_commits_by_author_for_branch(branch) + "\n" +
       create_stacked_bar_graph_of_commits_by_author_for_branch(branch) + "\n" +
       folder_graphs(branch, Babygitter.folder_levels) +
+      "</div>\n
+      <div class='branch_details'>" +
+      author_links(branch) +
       "<p>Last commit was done <tt>#{link_to_github?(branch.latest_commit, remote_url)}</tt> by #{branch.latest_commit.author.name} " +
       "on #{branch.latest_commit.date_time_string}
       <ul>
         #{committer_detail(branch.commits, remote_url)}
       </ul>" +
-      author_details(branch.authors, remote_url, branch.total_commits)
-      end.join("</div>")
+      author_details(branch.name, branch.authors, remote_url, branch.total_commits) +
+      "</div>\n
+      </div>"
+      end.join("\n")
     end
    
-   def author_details(authors, remote_branch, total_for_branch)
+   def author_details(branch_name, authors, remote_branch, total_for_branch)
      authors.map do |author|
-      "<div>
-        <h3>#{author.name}</h3>" +
-        create_bar_graph_of_commits_in_the_last_52_weeks(author) +
-        "<p>#{author.name} first commit for this branch was on #{author.began.date_time_string} <br />
-        They have committed #{pluralize(author.total_committed, "commit")} <br />
-        #{author.total_committed.to_f / total_for_branch} of the total for the branch<p>
-        <ul>
-          #{committer_detail(author.commits, remote_url)}
+        "<h3 id='#{branch_name}_#{author.name.gsub(/ /, "")}' class='author_name open'>#{author.name}</h3>\n
+        <div id='#{author.name}' class='author_wrapper'>\n" +
+          create_bar_graph_of_commits_in_the_last_52_weeks(author) +
+          "<p>#{author.name} first commit for this branch was on #{author.began.date_time_string} <br />
+          They have committed #{pluralize(author.total_committed, "commit")} <br />
+          #{author.total_committed.to_f / total_for_branch} of the total for the branch<p>
+          <ul>
+            #{committer_detail(author.commits, remote_url)}
+          </ul>\n
+        </div>"
+      end.join("\n")
+   end
+   
+   def author_links(branch)
+      names =  branch.author_names
+      case names.length
+      when 1
+        "<ul class='page_control'>
+            <li>Only <a href=##{branch.name}_#{names.first.gsub(/ /, "")}>#{names.first}</a> has committed to #{branch.name}</li>
+         </ul>"
+      else
+        "<ul class='page_control'>" + 
+          names[0..-2].map do |name|
+           "<li><a href=##{branch.name}_#{name.gsub(/ /, "")}>#{name}</a>,</li>"
+          end.join("\n") +
+           "<li><a href=##{branch.name}_#{names.last.gsub(/ /, "")}>#{names.last}</a> have committed to #{branch.name}</li>
         </ul>"
-      end.join("</div")
+      end
    end
    
    def folder_graphs(branch, levels)

@@ -5,7 +5,8 @@ module Babygitter
   
   class << self
     # Customizable options
-    attr_accessor :report_file_path, :stylesheet, :template, :additional_links, :instructions, :jquery, :folder_levels, :blacklisted_folders
+    attr_accessor :report_file_path, :stylesheet, :template, :additional_links, :instructions, 
+    :jquery, :folder_levels, :blacklisted_folders
     
     def blacklisted_folders=(blacklisted_folders)
       raise "must be an array" unless blacklisted_folders.is_a?(Array)
@@ -25,12 +26,13 @@ module Babygitter
   self.template = File.join(File.dirname(__FILE__), '../assets/templates/default.html.erb')
   self.additional_links = File.join(File.dirname(__FILE__), '../assets/guides/bdd_stack.html.erb')
   self.instructions = File.join(File.dirname(__FILE__), '../assets/guides/display_only.html.erb')
-  self.folder_levels = [2]
+  self.folder_levels = [1,2]
   self.blacklisted_folders = []
 
   class Repo
     
-    attr_accessor :total_commits, :branches, :branch_names, :authors_names, :began, :lastest_commit, :remote_url, :submodule_list
+    attr_accessor :total_commits, :branches, :branch_names, :authors_names, :began, :lastest_commit, :remote_url,
+    :submodule_list, :project_name
     
     def initialize(path, options = {})
       repo = Grit::Repo.new(path, options)
@@ -41,8 +43,10 @@ module Babygitter
       @began = first_committed_commit
       @lastest_commit = last_commited_commit
       @total_commits = get_total_uniq_commits_in_repo
+      @config = (Grit::Config.new(repo))
       @submodule_list = submodule_codes
-      @remote_url = get_remote_url(repo)
+      @remote_url = get_remote_url
+      @project_name = get_project_name.capitalize
     end
     
     def get_all_commits_in_repo
@@ -74,19 +78,29 @@ module Babygitter
       @branches.collect(&:author_names).flatten.uniq.sort_by { |k| k.downcase }
     end
     
-    def get_remote_url(repo)
-      config = Grit::Config.new(repo)
-      remote_url = config.fetch('remote.origin.url')
-        if remote_url =~ /^git:\/\/github.com/
-          remote_url.gsub!(/^git/, "http")
-          remote_url.gsub!(/.git$/, "")
-        elsif remote_url =~ /^git@github.com/
-          remote_url.gsub!(/^git@github.com:/, "http://github.com/")
-          remote_url.gsub!(/.git$/, "")
-        else
-          ""
-        end        
-      end
+    def get_remote_url
+      remote_url = @config.fetch('remote.origin.url').clone
+      if remote_url =~ /^git:\/\/github.com/
+        remote_url.gsub!(/^git/, "http")
+        remote_url.gsub!(/.git$/, "")
+      elsif remote_url =~ /^git@github.com/
+        remote_url.gsub!(/^git@github.com:/, "http://github.com/")
+        remote_url.gsub!(/.git$/, "")
+      else
+        ""
+      end        
+    end
+    
+    def get_master_branch
+      master_branch = @config.fetch("branch.master.merge").clone
+      master_branch.gsub!(/.*?\//, "")
+    end
+    
+    def get_project_name
+      project_name = @config.fetch("remote.origin.url").clone
+      project_name.gsub!(/.*?\//, "")
+      project_name.gsub!(/.git/, "")
+    end
       
     def submodule_codes
       `cd #{@path.gsub(/\/.git$/, "")}; git submodule`

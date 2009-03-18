@@ -17,17 +17,34 @@ div#container {
 	padding:2em;
 	text-align:left;
 }
+div {
+	clear:both;
+}
+
+div.image_gallery {float:left; border: 1px solid black; background:#E1E1E1; margin:5px 0px;}
+
 a { color:#336699; }
+
+a.image_gallery {float:left; border: 1px solid #999; margin:6px; margin-left:7px;}
+
 h1 { 
 	font-size:2.4em;
 	color:#ccc;
+	padding:5px 0;
 }
 h2 { font-size:2.2em; 
 	color:#999;
+	padding:5px 0;
+}
+
+h2.branch_name {
+	padding-right:10px;
+	float:left;
 }
 
 h3 { font-size:2.0em; 
 	color:#999;
+	padding:5px 0;
 }
 p,ul {
 	font-size:1.4em;
@@ -39,6 +56,33 @@ ul {
 	padding-left:2.0em;
 	font-size:1.3em;
 }
+
+ul.page_control {
+	list-style:none;
+	float:left;
+	clear:both;
+	padding:0px;
+}
+
+ul.page_control li {
+	list-style:none;
+	float:left;
+	margin-right:10px;
+}
+
+ul.page_control li a {
+	text-decoration:none;
+	color:#954EC1;
+}
+
+a.branch_controller {
+	font-size:12px;
+	padding:5px 0;
+	line-height:2.2em;
+	text-decoration:none;
+	color:#C267FF;
+}
+
 tt { font-size:1.1em; }
 cite {
 	color:#999;
