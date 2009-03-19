@@ -5,7 +5,7 @@ module Babygitter
   
   class << self
     # Customizable options
-    attr_accessor :report_file_path, :stylesheet, :template, :additional_links, :instructions, 
+    attr_accessor :repo_path, :report_file_path, :stylesheet, :template, :additional_links, :instructions, 
     :jquery, :folder_levels, :blacklisted_folders
     
     def blacklisted_folders=(blacklisted_folders)
@@ -20,7 +20,8 @@ module Babygitter
   
   end
   
-  self.report_file_path = File.join(File.dirname(__FILE__), '../../../../log')
+  self.repo_path = FileUtils.pwd
+  self.report_file_path = "#{self.repo_path}" + "/log/babygitter_report"
   self.stylesheet = File.join(File.dirname(__FILE__), '../assets/stylesheets/default.css')
   self.jquery = File.join(File.dirname(__FILE__), '../assets/javascripts/jquery.js')
   self.template = File.join(File.dirname(__FILE__), '../assets/templates/default.html.erb')

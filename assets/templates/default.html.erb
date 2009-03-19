@@ -32,6 +32,13 @@
 	           		$(this).each(closeDiv)
 	         	}
 		 	});
+		
+			$("a.image_gallery").fancybox({
+					'zoomSpeedIn': 500, 
+					'zoomSpeedOut':	500, 
+					'overlayShow': false,
+					'easingChange': 'linear'
+			});
 		 });
 		</script>
 		
@@ -51,10 +58,10 @@
 			<div id="summary">
 				<h2>Summary</h2>
 				<p>The main repository on this server is at version <tt><%= @lastest_commit.id_abbrev %></tt>.
-				<p>It was last deployed <%= Time.now.strftime("%b %d %I:%M %p") %>.</p>
+				<p>It was last deployed <%=@lastest_commit.date_time_string  %>.</p>
 				<p><%= authors_list(@authors_names) %> committed to this project since <%= @began.date_time_string%>.</p>
 				<p style="float:left; margin-right:5px"> The repository has <%=pluralize(@branches.size, "branch") %>:</p>
-				<%= branches_list(@branch_names) %>
+				<%= bl(@branch_names) %>
 				<p style="clear:both;">They have committed a total of <%=pluralize(@total_commits, "commit")%></p>
 			</div>
 			

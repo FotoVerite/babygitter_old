@@ -34,7 +34,7 @@ describe Babygitter::ReportGenerator do
   it "should get the submodule codes"
   
   it "should find the last committed commit" do
-    GIT_REPO.latest_commit.id.should == "ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a"
+    GIT_REPO.lastest_commit.id.should == "ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a"
   end
   
   it "should list all authors in an array" do
@@ -43,11 +43,11 @@ describe Babygitter::ReportGenerator do
   end
   
   it "should list the authors of the repo in a readible manner" do 
-    Babygitter::ReportGenerator.authors_list(GIT_REPO.authors_names).should == "Chris Wanstrath, Cristi Balan, Dustin Sallings, " + 
+    GIT_REPO.authors_list(GIT_REPO.authors_names).should == "Chris Wanstrath, Cristi Balan, Dustin Sallings, " + 
 "Kamal Fariz Mahyuddin, rick, Scott Chacon, Tim Carey-Smith, tom, Tom Preston-Werner and Wayne Larsen have"
   end
   it "should list the authors commits of the repo in a readible manner" do 
-    committer_detail(GIT_REPO.branches.first.authors.first.commits[0..3]).should == "<li>timeout code and tests "+
+    GIT_REPO.committer_detail(GIT_REPO.branches.first.authors.first.commits[0..3]).should == "<li>timeout code and tests "+
 "<cite>Chris Wanstrath Mar 30 11:50 PM 2008</cite> 30e367c</li>
 <li>add timeout protection to grit <cite>Chris Wanstrath Mar 30 07:31 PM 2008</cite> 5a09431</li>
 <li>support for heads with slashes in them <cite>Chris Wanstrath Mar 29 11:31 PM 2008</cite> e1193f8</li>

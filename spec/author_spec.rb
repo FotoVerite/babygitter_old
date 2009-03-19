@@ -1,8 +1,7 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'grit'
 
-  @base_repo = Grit::Repo.new(File.join(File.dirname(__FILE__), "/dot_git"), :is_bare => true)
-  GIT_REPO =Babygitter::Babygitter.new(@base_repo)
+  GIT_REPO =Babygitter::Repo.new(File.join(File.dirname(__FILE__), "/dot_git"), :is_bare => true)
   BRANCH= GIT_REPO.branches[4]
   AUTHOR = BRANCH.authors.first
   
@@ -13,7 +12,7 @@ describe Babygitter::Author do
   end
   
   it "should display the amounts of commits by this author" do
-    AUTHOR.total_commited.should == 17
+    AUTHOR.total_committed.should == 17
   end
   
   it "should display the lastest commit by this author" do
