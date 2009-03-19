@@ -4,27 +4,27 @@ module Babygitter
     
   def authors_list(array_of_authors)
      case array_of_authors.length
-     when 1
+     when 1:
        'Only ' + array_of_authors.first + ' has'
      else
        array_of_authors[0..-2].join(', ') + ' and ' + array_of_authors.last + ' have'
      end
    end
    
-   def branches_list(branches_names)
-      names =  branches_names
-      case names.length
-      when 1
+   def bl(branches_names)
+      case branch_names.length
+      when 1:
         "<ul class='page_control'>
-            <li><a href=##{names.first.gsub(/ /, "")}>#{names.first}</a></li>
+            <li><a href=##{branch_names.first.gsub(/ /, "")}>#{branch_names.first}</a></li>
          </ul>"
       else
-        "<ul class='page_control'>" + 
-          names[0..-2].map do |name|
-           " <li><a href=##{names.first.gsub(/ /, "")}>#{name}</a></li>"
-          end.join("\n") +
-           "<li>and <a href=##{names.first.gsub(/ /, "")}>#{name}</a></li>
+        string = "<ul class='page_control'>" 
+         for name in branch_names[0..-2]
+            string += "<li><a href=##{name.gsub(/ /, "")}>#{name}</a></li>\n"
+         end
+          string += "<li>and <a href=##{branch_names.last.gsub(/ /, "")}>#{branch_names.last}</a></li>
         </ul>"
+        string
       end
     end
 
@@ -39,7 +39,7 @@ module Babygitter
       "</div>\n
       <div class='branch_details'>\n" +
       author_links(branch) +
-      "<p>Last commit was done <tt>#{link_to_github?(branch.latest_commit, remote_url)}</tt> by #{branch.latest_commit.author.name} " +
+      "<p>Last commit was <tt>#{link_to_github?(branch.latest_commit, remote_url)}</tt> by #{branch.latest_commit.author.name} " +
       "on #{branch.latest_commit.date_time_string}</p>
       <p>They have committed a total of #{pluralize(branch.total_commits, "commit")}</p>
       <h3 class='toggler open'>#{branch.name} commit history</h3>
@@ -72,7 +72,7 @@ module Babygitter
    def author_links(branch)
       names =  branch.author_names
       case names.length
-      when 1
+      when 1:
         "<ul class='page_control'>
             <li>Only <a href=##{branch.name}_#{names.first.gsub(/ /, "")}>#{names.first}</a> has committed to #{branch.name}</li>
          </ul>"
@@ -104,7 +104,7 @@ module Babygitter
     end
     
     def link_to_github?(commit, remote_url)
-      remote_url == "" ? "<tt><#{commit.id_abbrev}</tt>" : 
+      remote_url == "" ? "<tt>#{commit.id_abbrev}</tt>" : 
       "<tt><strong><a href='#{remote_url}/commit/#{commit.id}'>#{commit.id_abbrev}</a></strong></tt>"
     end
     

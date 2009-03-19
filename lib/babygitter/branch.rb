@@ -34,13 +34,13 @@ module Babygitter
         active_date_array = []
         now = began.date
         i = 0
-        weeks_repo_has_been_active = ((latest_commit.date - began.date ) / (60*60*24*7)).ceil
+        weeks_repo_has_been_active = ((latest_commit.date - began.date ) / (60*60*24*1)).ceil
         while i < weeks_repo_has_been_active
           active_date_array << now.strftime("%U %Y")
-          now += (60*60*24*7)
+          now += (60*60*24*1)
           i += 1
         end
-        active_date_array
+        active_date_array.uniq
       end
             
       def sorted_commits_by_week
@@ -88,7 +88,7 @@ module Babygitter
       end
       
       def plot_folder_points(levels)
-        stable_hash = create_hash_map_with_array(@folder_array[0..(levels -1)].flatten)
+        stable_hash = create_hash_map_with_array(@folder_array[0..(levels -1)].flatten - Babygitter.blacklisted_folders)
         get_folder_commits_by_week_and_level(levels).each do |hash|
           hash.each_key do |key|
             stable_hash[key] << (stable_hash[key].last + hash[key])
@@ -101,10 +101,10 @@ module Babygitter
         output = []
         diff_staff_by_week =  @mapped_diffs
           for array_of_diff_staff in diff_staff_by_week
-            plot_hash = create_hash_map(@folder_array[0..(levels -1)].flatten).clone
+            plot_hash = create_hash_map(@folder_array[0..(levels -1)].flatten - Babygitter.blacklisted_folders).clone
             for diff in array_of_diff_staff
               key = find_key(levels, diff)
-              plot_hash[key] = plot_hash[key] += (diff.additions - diff.deletions)
+              plot_hash[key] = plot_hash[key] += (diff.additions - diff.deletions) unless plot_hash[key].nil?
             end
             output << plot_hash
           end
