@@ -12,30 +12,42 @@ module Babygitter
    end
    
    def branches_list(branches_names)
-      case branches_names.length
+      names =  branches_names
+      case names.length
       when 1
-        branches_names.first
+        "<ul class='page_control'>
+            <li><a href=##{names.first.gsub(/ /, "")}>#{names.first}</a></li>
+         </ul>"
       else
-        branches_names[0..-2].join(', ') + ' and ' + branches_names.last
+        "<ul class='page_control'>" + 
+          names[0..-2].map do |name|
+           " <li><a href=##{names.first.gsub(/ /, "")}>#{name}</a></li>"
+          end.join("\n") +
+           "<li>and <a href=##{names.first.gsub(/ /, "")}>#{name}</a></li>
+        </ul>"
       end
     end
 
    def branch_details(branches, remote_url)
       branches.map do |branch|
-      "<h2 class='branch_name open'>#{branch.name}</h2>\n
-      <div class='branch_wrapper'>\n
-      \t<div class='image_gallery'>\n" +
+      "<h2 class='toggler open' id='#{branch.name.gsub(/ /, '')}'>#{branch.name}</h2>\n
+      <div class='toggle'>\n
+      <div class='image_gallery'>\n" +
       create_histograph_of_commits_by_author_for_branch(branch) + "\n" +
       create_stacked_bar_graph_of_commits_by_author_for_branch(branch) + "\n" +
       folder_graphs(branch, Babygitter.folder_levels) +
       "</div>\n
-      <div class='branch_details'>" +
+      <div class='branch_details'>\n" +
       author_links(branch) +
       "<p>Last commit was done <tt>#{link_to_github?(branch.latest_commit, remote_url)}</tt> by #{branch.latest_commit.author.name} " +
-      "on #{branch.latest_commit.date_time_string}
+      "on #{branch.latest_commit.date_time_string}</p>
+      <p>They have committed a total of #{pluralize(branch.total_commits, "commit")}</p>
+      <h3 class='toggler open'>#{branch.name} commit history</h3>
+      <div class='toggle'>
       <ul>
         #{committer_detail(branch.commits, remote_url)}
-      </ul>" +
+      </ul>
+      </div" +
       author_details(branch.name, branch.authors, remote_url, branch.total_commits) +
       "</div>\n
       </div>"
@@ -44,8 +56,8 @@ module Babygitter
    
    def author_details(branch_name, authors, remote_branch, total_for_branch)
      authors.map do |author|
-        "<h3 id='#{branch_name}_#{author.name.gsub(/ /, "")}' class='author_name open'>#{author.name}</h3>\n
-        <div id='#{author.name}' class='author_wrapper'>\n" +
+        "<h3 id='#{branch_name}_#{author.name.gsub(/ /, "")}' class='toggler open'>#{author.name}</h3>\n
+        <div id='#{author.name}' class='toggle'>\n" +
           create_bar_graph_of_commits_in_the_last_52_weeks(author) +
           "<p>#{author.name} first commit for this branch was on #{author.began.date_time_string} <br />
           They have committed #{pluralize(author.total_committed, "commit")} <br />
